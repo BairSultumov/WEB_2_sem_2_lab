@@ -11,50 +11,23 @@ let gettime = function () {
   let seconds = now.getSeconds()
   return `${hour}:${minute}:${seconds}`
 }
-
 http.createServer(function (request, response) {
-  
-  if (request.url === "/index" || request.url === "/") { // маршрут 1 
-    fs.readFile("index.html", "utf8", function (error, data) {
-      if(error){        
-        response.statusCode = 404; 
-        response.end("Resourse not found!"); 
-    }    
-    else{ 
-        response.end(data); 
-    }
-    })
-  }
-
-  else if (request.url === "/content") { // маршрут 2 
-    fs.readFile("content.html", "utf8", function (error, data) {
-      if(error){        
-        response.statusCode = 404; 
-        response.end("Resourse not found!"); 
-    }    
-    else{ 
-        response.end(data); 
-    }
-    })
-  }
-
-  else if (request.url === "/info") { // маршрут 3 
-    fs.readFile("info.html", "utf8", function (error, data) {
-      if(error){        
-        response.statusCode = 404; 
-        response.end("Resourse not found!"); 
-    }    
-    else{ 
-        response.end(data); 
-    }
-    })
-  }
-
-  else {
-    response.writeHead(404, { 'Content-type': 'text/html; charset=utf-8' })
-    response.end("<h2>Not found</h2>"); // маршрут не обнаружен 
-  }
-
+  const filePath = request.url.substr(1); // получаем путь после слеша 
+  if (request.url == "/")
+    fs.readFile("index.html", function (error, data) { response.end(data); });
+  else
+    fs.readFile(filePath, function (error, data) {
+      if (error) {
+        response.statusCode = 404;
+        response.end("Resourse not found!");
+      }
+      else {
+        response.end(data);
+      }
+      // if (request.url = "/")
+      //   fs.readFile("index.html", function (error, data) { response.end(data); });
+    });
   console.log(`${gettime()}: Запрошенный адрес: ${request.url}`);
-
-}).listen(3000);
+}).listen(3000, function () {
+  console.log("Server started at 3000");
+})
